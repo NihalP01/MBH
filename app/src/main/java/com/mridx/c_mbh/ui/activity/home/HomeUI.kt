@@ -1,5 +1,6 @@
 package com.mridx.c_mbh.ui.activity.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -7,15 +8,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.AdapterListUpdateCallback
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.imageview.ShapeableImageView
 import com.mridx.c_mbh.R
+import com.mridx.c_mbh.Utils.AppExecutors
+import com.mridx.c_mbh.Utils.LiveSession
 import com.mridx.c_mbh.Utils.Utils.Companion.sliderDelay
 import com.mridx.c_mbh.adapter.BannerAdapter
 import com.mridx.c_mbh.adapter.CategoryAdapter
 import com.mridx.c_mbh.adapter.ProductAdapter
+import com.mridx.c_mbh.adapter.callbacks.AdapterItemClickedListener
+import com.mridx.c_mbh.data.ProductData
+import com.mridx.c_mbh.database.room.db.CartDatabase
+import com.mridx.c_mbh.ui.activity.product.ProductUI
 import kotlinx.android.synthetic.main.content_ui.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -64,6 +72,11 @@ class HomeUI : AppCompatActivity() {
             productAdapter?.setList(it)
         })
 
+        AppExecutors.getInstance().diskIO().execute {
+            LiveSession.getInstance().getSessionData().cartItem =
+                CartDatabase.getInstance(this).cartItemDao().getAll().size
+        }
+
 
     }
 
@@ -87,7 +100,20 @@ class HomeUI : AppCompatActivity() {
             }
         }
 
-        productAdapter = ProductAdapter()
+        productAdapter = ProductAdapter().also {
+            it.adapterItemClickedListener = object : AdapterItemClickedListener {
+                override fun onClicked(data: Any) {
+                    val intent =
+                        Intent(this@HomeUI, ProductUI::class.java).also { intent ->
+                            intent.putExtra("DATA", data as ProductData)
+                        }
+                    startActivity(intent)
+                }
+
+                override fun onLongClicked(data: Any) {
+                }
+            }
+        }
         itemHolder?.apply {
             adapter = productAdapter
             layoutManager = GridLayoutManager(

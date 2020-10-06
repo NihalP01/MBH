@@ -63,6 +63,7 @@ class HomeUIViewModel : ViewModel() {
 
             val images = ArrayList<String>()
             images.add("https://www.bigbasket.com/media/uploads/p/l/10000903_10-fresho-chicken-leg-boneless-antibiotic-residue-free-growth-hormone-free-2-3-pcs.jpg")
+            images.add("https://image.freepik.com/free-vector/offline-twitch-banner-template_23-2148600905.jpg")
 
             pList.add(
                 ProductData(
