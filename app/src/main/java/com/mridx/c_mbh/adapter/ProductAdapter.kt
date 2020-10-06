@@ -3,14 +3,18 @@ package com.mridx.c_mbh.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.AdapterListUpdateCallback
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mridx.c_mbh.R
+import com.mridx.c_mbh.adapter.callbacks.AdapterItemClickedListener
 import com.mridx.c_mbh.data.ProductData
 import com.mridx.c_mbh.data.Weight
 import kotlinx.android.synthetic.main.product_view.view.*
 
 class ProductAdapter : RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
+
+    var adapterItemClickedListener: AdapterItemClickedListener? = null
 
     private var list: ArrayList<ProductData> = ArrayList()
 
@@ -38,6 +42,7 @@ class ProductAdapter : RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
             itemView.productUnitView?.text = data.weights[0].weight
             itemView.productPriceView?.text = data.weights[0].price
             Glide.with(itemView.context).load(data.images[0]).into(itemView.productImageView)
+            itemView.setOnClickListener { adapterItemClickedListener?.onClicked(data) }
         }
 
     }

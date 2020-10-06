@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2020. Code by MriDx
+  -->
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@drawable/ic_cart"
+        android:gravity="center" />
+
+    <item
+        android:id="@+id/badgeCount"
+        android:drawable="@android:color/transparent" />
+
+</layer-list>

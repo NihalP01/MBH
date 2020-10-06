@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:showIn="@layout/product_ui">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
@@ -20,52 +22,71 @@
             android:textSize="18sp"
             app:fontFamily="sans-serif-condensed" />
 
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/taxInfo"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="*Inclusive of all taxes" />
+            android:layout_height="wrap_content">
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/productImageHolder"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_marginTop="10dp"
-            />
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/productImageHolder"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/indicatorHolder"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                app:layout_constraintBottom_toBottomOf="@+id/productImageHolder"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/productUnitHeading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="Pack Size"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:fontFamily="sans-serif-condensed-medium"
-            android:layout_marginTop="10dp"
-            />
+            app:fontFamily="sans-serif-condensed-medium" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="start"
             android:orientation="horizontal"
             android:paddingTop="5dp"
-            android:paddingBottom="5dp">
+            android:paddingBottom="5dp"
+            android:weightSum="2">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/productUnitSelectorHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Quantity"
+                android:visibility="visible"
+                app:fontFamily="sans-serif-condensed-medium" />
 
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/productUnitSelector"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_marginStart="10dp"
+                />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/productPriceView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Rs. 50" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -80,7 +101,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Rs. 50"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:textSize="16sp" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/productMRPView"
@@ -96,9 +118,16 @@
                 android:layout_marginStart="10dp"
                 android:text="5% OFF"
                 android:textColor="@color/red"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/taxInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="*Inclusive of all taxes" />
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>

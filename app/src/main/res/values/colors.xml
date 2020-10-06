@@ -13,5 +13,6 @@
     <color name="black">#000000</color>
 
     <color name="red">#BF360C</color>
+    <color name="badge_background">#E65100</color>
 
 </resources>
