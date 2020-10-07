@@ -2,6 +2,8 @@ package com.mridx.c_mbh.ui.activity.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +25,8 @@ import com.mridx.c_mbh.adapter.ProductAdapter
 import com.mridx.c_mbh.adapter.callbacks.AdapterItemClickedListener
 import com.mridx.c_mbh.data.ProductData
 import com.mridx.c_mbh.database.room.db.CartDatabase
+import com.mridx.c_mbh.libs.MenuBadgeHelper
+import com.mridx.c_mbh.ui.activity.cart.CartUI
 import com.mridx.c_mbh.ui.activity.product.ProductUI
 import kotlinx.android.synthetic.main.content_ui.*
 import kotlinx.coroutines.GlobalScope
@@ -126,6 +130,27 @@ class HomeUI : AppCompatActivity() {
 
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.cart_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        MenuBadgeHelper.addBadge(
+            this,
+            menu,
+            LiveSession.getInstance().getSessionData().cartItem.toString()
+        )
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+            R.id.cart -> startActivity(Intent(this, CartUI::class.java))
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
     //region Banner
 

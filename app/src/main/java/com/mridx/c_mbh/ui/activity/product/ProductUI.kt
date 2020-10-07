@@ -1,8 +1,10 @@
 package com.mridx.c_mbh.ui.activity.product
 
+import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -24,6 +26,7 @@ import com.mridx.c_mbh.data.Weight
 import com.mridx.c_mbh.database.room.db.CartDatabase
 import com.mridx.c_mbh.database.room.tables.CartItem
 import com.mridx.c_mbh.libs.MenuBadgeHelper
+import com.mridx.c_mbh.ui.activity.cart.CartUI
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.content_ui.*
 import kotlinx.android.synthetic.main.product_content_ui.*
@@ -146,6 +149,14 @@ class ProductUI : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.cart_menu, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+            R.id.cart -> startActivity(Intent(this, CartUI::class.java))
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     fun getMenu() = this.uMenu
