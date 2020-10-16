@@ -1,19 +1,29 @@
-package com.mridx.c_mbh.ui.activity.home
+package com.mridx.c_mbh.ui.activity.home_ui
 
+import android.app.SearchManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.appcompat.widget.SearchView
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.AdapterListUpdateCallback
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.dev.aii.adapter.callback.AdapterIdentifier
 import com.google.android.material.imageview.ShapeableImageView
 import com.mridx.c_mbh.R
 import com.mridx.c_mbh.Utils.AppExecutors
@@ -29,12 +39,14 @@ import com.mridx.c_mbh.libs.MenuBadgeHelper
 import com.mridx.c_mbh.ui.activity.cart.CartUI
 import com.mridx.c_mbh.ui.activity.product.ProductUI
 import kotlinx.android.synthetic.main.content_ui.*
+import kotlinx.android.synthetic.main.content_ui.indicatorHolder
+import kotlinx.android.synthetic.main.product_content_ui.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-class HomeUI : AppCompatActivity() {
+class HomeUI : AppCompatActivity(), AdapterItemClickedListener {
 
     lateinit var viewModel: HomeUIViewModel
 
@@ -44,6 +56,7 @@ class HomeUI : AppCompatActivity() {
 
     private var currentPage = 0
     private var bannerItems = 0
+    private var umenu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,20 +67,23 @@ class HomeUI : AppCompatActivity() {
             title = getString(R.string.app_name)
         }
 
-
         viewModel = ViewModelProvider(this).get(HomeUIViewModel::class.java)
+
+        Log.d("kaku", "onCreate: ${LiveSession.getInstance().getUserId()}")
 
         setupView()
 
-        viewModel.setupHome(this)
+        viewModel.setupHome()
 
         viewModel.bannerList.observe(this, {
             bannerAdapter?.setList(it)
             bannerItems = it.size
-            setupIndicator().also {
-                setupCurrentIndicator(0)
+            if (indicatorHolder?.childCount != bannerItems) {
+                setupIndicator().also {
+                    setupCurrentIndicator(0)
+                }
+                startSlide(sliderDelay)
             }
-            startSlide(sliderDelay)
         })
         viewModel.categoryList.observe(this, {
             categoryAdapter?.setList(it)
@@ -76,13 +92,23 @@ class HomeUI : AppCompatActivity() {
             productAdapter?.setList(it)
         })
 
-        AppExecutors.getInstance().diskIO().execute {
-            LiveSession.getInstance().getSessionData().cartItem =
-                CartDatabase.getInstance(this).cartItemDao().getAll().size
+        LiveSession.cartItems.observe(this) {
+            if (umenu != null) {
+                MenuBadgeHelper.addBadge(this, umenu, it.toString())
+            }
         }
 
+        GlobalScope.launch {
+            /*LiveSession.getInstance().getSessionData().cartItem =
+                CartDatabase.getInstance(this@HomeUI).cartItemDao().getAll().size*/
+            CartDatabase.getInstance(this@HomeUI).cartItemDao().getAll().size.also {
+                LiveSession.getInstance().getSessionData().cartItem = it
+                LiveSession.getInstance().cartItems(it)
+            }
+        }
 
     }
+
 
     private fun setupView() {
         bannerAdapter = BannerAdapter()
@@ -105,18 +131,7 @@ class HomeUI : AppCompatActivity() {
         }
 
         productAdapter = ProductAdapter().also {
-            it.adapterItemClickedListener = object : AdapterItemClickedListener {
-                override fun onClicked(data: Any) {
-                    val intent =
-                        Intent(this@HomeUI, ProductUI::class.java).also { intent ->
-                            intent.putExtra("DATA", data as ProductData)
-                        }
-                    startActivity(intent)
-                }
-
-                override fun onLongClicked(data: Any) {
-                }
-            }
+            it.adapterItemClickedListener = this
         }
         itemHolder?.apply {
             adapter = productAdapter
@@ -127,21 +142,28 @@ class HomeUI : AppCompatActivity() {
                 it.orientation = GridLayoutManager.VERTICAL
             }
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.cart_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
+        menuInflater.inflate(R.menu.main_menu, menu)
+        this.umenu = menu
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        (menu?.findItem(R.id.action_search)?.actionView as SearchView).apply {
+            setSearchableInfo(searchManager.getSearchableInfo(componentName))
+            queryHint = "Search here"
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    Toast.makeText(this@HomeUI, "Search for $query", Toast.LENGTH_SHORT)
+                        .show()
+                    return false
+                }
 
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        MenuBadgeHelper.addBadge(
-            this,
-            menu,
-            LiveSession.getInstance().getSessionData().cartItem.toString()
-        )
-        return super.onPrepareOptionsMenu(menu)
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    return false
+                }
+            })
+        }
+        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -152,8 +174,10 @@ class HomeUI : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+
     //region Banner
 
+    @Synchronized
     private fun startSlide(i: Long) {
         GlobalScope.launch {
             delay(1000 * i)
@@ -166,6 +190,7 @@ class HomeUI : AppCompatActivity() {
     }
 
     private fun setupIndicator() {
+        if (indicatorHolder?.childCount == bannerItems) return
         val indicator: Array<ShapeableImageView?> = arrayOfNulls(bannerItems)
         val layoutParams = LinearLayoutCompat.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
@@ -201,5 +226,57 @@ class HomeUI : AppCompatActivity() {
 
     //endregion
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        //oneStepBack()
+    }
+
+    private fun oneStepBack() {
+        val fts: FragmentTransaction = supportFragmentManager.beginTransaction()
+        val fragmentManager: FragmentManager = supportFragmentManager
+        if (fragmentManager.backStackEntryCount >= 1) {
+            fragmentManager.popBackStackImmediate()
+            fts.commit()
+        } else {
+            Toast.makeText(this, "Press again to exit", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override fun onClicked(adapterIdentifier: AdapterIdentifier, data: Any) {
+        startActivity(
+            Intent(this@HomeUI, ProductUI::class.java).also { intent ->
+                intent.putExtra("DATA", data as ProductData)
+            })
+    }
+
+    override fun onClickedWithTransition(
+        adapterIdentifier: AdapterIdentifier,
+        data: Any,
+        sharedView: View
+    ) {
+        when (adapterIdentifier) {
+            AdapterIdentifier.PRODUCT_ADAPTER -> {
+                startActivity(
+                    Intent(this, ProductUI::class.java).also {
+                        it.putExtras(Bundle().apply {
+                            this.putSerializable("DATA", data as ProductData)
+                        })
+                    },
+                    ViewCompat.getTransitionName(sharedView)?.let {
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            this,
+                            sharedView,
+                            it
+                        ).toBundle()
+                    }
+                )
+            }
+            else -> {
+            }
+        }
+    }
+
+    override fun onLongClicked(adapterIdentifier: AdapterIdentifier, data: Any) {
+    }
 
 }

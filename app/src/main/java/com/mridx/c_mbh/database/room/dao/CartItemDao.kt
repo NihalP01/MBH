@@ -17,4 +17,7 @@ interface CartItemDao {
     @Insert(onConflict = IGNORE)
     fun insertItem(cartItem: CartItem): Long
 
+    @Query("SELECT * FROM " + CartItem.CART_ITEM + " WHERE item_id = :item_id")
+    fun check(item_id: String): CartItem?
+
 }

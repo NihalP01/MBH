@@ -33,7 +33,19 @@ class CartItem {
         private set
 
     @ColumnInfo(name = "price")
-    var price: String
+    var price: Float
+        private set
+
+    @ColumnInfo(name = "image")
+    var image: String
+        private set
+
+    @ColumnInfo(name = "mrp")
+    var mrp: Float
+        private set
+
+    @ColumnInfo(name = "type")
+    var type: String
         private set
 
     constructor(
@@ -42,7 +54,10 @@ class CartItem {
         item_name: String,
         unit: String,
         quantity: Int,
-        price: String
+        price: Float,
+        image: String,
+        mrp: Float,
+        type: String
     ) {
         this.id = id
         this.item_id = item_id
@@ -50,6 +65,9 @@ class CartItem {
         this.unit = unit
         this.quantity = quantity
         this.price = price
+        this.image = image
+        this.mrp = mrp
+        this.type = type
     }
 
 
@@ -59,13 +77,19 @@ class CartItem {
         item_name: String,
         unit: String,
         quantity: Int,
-        price: String
+        price: Float,
+        image: String,
+        mrp: Float,
+        type: String
     ) {
         this.item_id = item_id
         this.item_name = item_name
         this.unit = unit
         this.quantity = quantity
         this.price = price
+        this.image = image
+        this.mrp = mrp
+        this.type = type
     }
 
 

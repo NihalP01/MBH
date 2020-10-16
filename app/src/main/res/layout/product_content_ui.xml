@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:showIn="@layout/product_ui">
+    tools:showIn="@layout/product_fragment">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
         android:layout_marginBottom="60dp"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:layout_marginTop="?attr/actionBarSize"
+        >
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/productInfoText"
@@ -22,7 +23,13 @@
             android:textSize="18sp"
             app:fontFamily="sans-serif-condensed" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/productImageView"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginTop="20dp" />
+
+        <!--<androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -50,8 +57,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+        </androidx.constraintlayout.widget.ConstraintLayout>-->
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/productUnitHeading"
@@ -61,16 +67,20 @@
             android:text="Pack Size"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:fontFamily="sans-serif-condensed-medium" />
+            app:fontFamily="sans-serif-condensed-medium"
+            android:visibility="gone"
+            />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="start"
+            android:gravity="start|center_vertical"
             android:orientation="horizontal"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:weightSum="2">
+            android:weightSum="2"
+            android:visibility="gone"
+            >
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/productUnitSelectorHeading"
@@ -81,13 +91,22 @@
                 app:fontFamily="sans-serif-condensed-medium" />
 
             <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/productUnitSelector"
+                android:id="@+id/productQtySelector"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp" />
 
 
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/productTypeView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Type : Chalani"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:fontFamily="sans-serif-condensed-medium" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
@@ -96,19 +115,32 @@
             android:orientation="horizontal">
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/productWeightView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="250 gm"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:fontFamily="sans-serif-condensed-medium" />
+
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/productActualPriceView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Rs. 50"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:layout_marginStart="10dp"
+                android:textSize="20sp"
+                app:fontFamily="sans-serif-condensed-medium" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/productMRPView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="MRP: Rs. 60" />
+                android:text="MRP: Rs. 60"
+                android:textColor="@color/red"
+                />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/productDiscountView"
@@ -117,8 +149,11 @@
                 android:layout_marginStart="10dp"
                 android:text="5% OFF"
                 android:textColor="@color/red"
+                app:fontFamily="sans-serif-condensed"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone"
+                />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -127,6 +162,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="*Inclusive of all taxes" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="Similar Products"
+            android:textSize="18sp"
+            app:fontFamily="sans-serif-condensed-medium" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/similarProductsHolder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"
+            tools:listitem="@layout/product_view" />
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>

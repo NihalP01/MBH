@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mridx.c_mbh.R
 import com.mridx.c_mbh.data.BannerData
-import com.mridx.c_mbh.ui.activity.home.HomeUI
 import kotlinx.android.synthetic.main.banner_view.view.*
 
 class BannerAdapter : RecyclerView.Adapter<BannerAdapter.ViewHolder>() {

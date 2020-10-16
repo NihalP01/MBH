@@ -8,8 +8,13 @@
 
     <include layout="@layout/app_bar" />
 
-    <include layout="@layout/product_content_ui" />
+    <!--<FrameLayout
+        android:id="@+id/productContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize" />-->
 
+    <include layout="@layout/product_content_ui" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"

@@ -4,9 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activity.home.HomeUI">
+    tools:context=".ui.activity.home_ui.HomeUI">
 
     <include layout="@layout/app_bar" />
+
+    <!--<FrameLayout
+        android:id="@+id/homeContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize" />-->
 
     <include layout="@layout/content_ui" />
 
